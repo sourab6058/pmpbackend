@@ -16,16 +16,35 @@ const upload = multer({ storage: storage });
 
 const route = express.Router();
 
+route.get("/:type", async (req, res) => {
+  let packages = [];
+  console.log(req.params.type);
+  packages = await db.query(
+    `SELECT * FROM package WHERE type="${req.params.type}"`
+  );
+  res.send(packages);
+});
+
+route.get("/getPackage/:id", async (req, res) => {
+  let packages = [];
+  console.log(req.params.id);
+  packages = await db.query(
+    `SELECT * FROM package WHERE id="${req.params.id}"`
+  );
+  res.send(packages);
+});
+
 route.get("/", async (_, res) => {
-  const packages = await db.query("SELECT * FROM package");
+  let packages = [];
+  packages = await db.query(`SELECT * FROM package`);
   res.send(packages);
 });
 
 route.post("/addPackage", async (req, res) => {
-  const { title, description, price, img_url, seller_id } = req.body;
+  const { title, description, price, img_url, seller_id, type } = req.body;
   console.log(req.body);
   const MySQLReply = await db.query(
-    `INSERT INTO package(title, description, price, imgs_url, seller_id) VALUES("${title}", "${description}", ${price}, "${img_url}", ${seller_id})`
+    `INSERT INTO package(title, description, price, imgs_url, seller_id, type) VALUES("${title}", "${description}", ${price}, "${img_url}", ${seller_id}, "${type}")`
   );
   res.send(MySQLReply);
 });
